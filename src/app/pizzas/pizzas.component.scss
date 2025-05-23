@@ -1,17 +1,17 @@
-h2 {
+.item-type {
     margin-bottom: 16px;
 }
 .pizzas-container {
-    ul {
+    .pizzas {
         list-style-type: none;
         margin: 0;
         padding: 0;
-        li {
+        .pizza {
             background-color: var(--primary-color);
             margin-bottom: 10px;
             padding: 10px;
             border-radius: 4px;
-            .visible-panel {
+            &__panel {
                 display: flex;
                 align-items: center;
                 width: 100%;
@@ -19,59 +19,62 @@ h2 {
                 cursor: pointer;
                 border: none;
             }
-            .active-panel {
+            &__panel--active {
                 display: flex;
                 justify-content: space-between;
                 align-items: flex-end;
-                .pizza-details {
+                .pizza-container {
                     width: inherit;
                     display: flex;
-                    .pizza-price-and-size {
+                    .pizza-details {
                         margin: 20px 10px 20px 20px;
                         display: flex;
                         flex-direction: column;
                         align-items: center;
-                        label {
+                        .checkbox-field {
                             display: flex;
                             flex-direction: column;align-items: center;
                             cursor: pointer;
                             /* i considered completely overwriting it but got it close enough
                             by modifying the native element */
-                            .checkbox {
+                            &__input {
                                 transform: scale(1.8);
                                 accent-color: var(--secondary-color);
                             }
-                            p {
+                            &__label {
                                 margin: 10px 0;
                             }
                         }
-                        /* currency and price-input would not align perfectly just by setting the same height, 
-                        so i used vertical-align to fix it */
-                        .currency, .price-input {
-                            display: inline-block; 
-                            vertical-align: middle;
+                        .pizza-price-details {
+                            /* currency and price-input would not align perfectly just by setting the same height, 
+                            so i used vertical-align to fix it */
+                            &__currency, &__price-input {
+                                display: inline-block; 
+                                vertical-align: middle;
+                            }
+                            &__currency {
+                                display: inline-block;
+                                height: 40px;
+                                padding: 10px;
+                                color: white;
+                                background-color: var(--secondary-color);
+                                border-radius: 4px 0 0 4px;
+                            }
+                            &__price-input {
+                                width: 80px;
+                                height: 40px;
+                                padding: 10px;
+                                text-align: center;
+                                border: 1px solid var(--secondary-color);
+                                border-radius: 0 4px 4px 0;
+                            }
                         }
-                        .currency {
-                            display: inline-block;
-                            height: 40px;
-                            padding: 10px;
-                            color: white;
-                            background-color: var(--secondary-color);
-                            border-radius: 4px 0 0 4px;
-                        }
-                        .price-input {
-                            width: 80px;
-                            height: 40px;
-                            padding: 10px;
-                            text-align: center;
-                            border: 1px solid var(--secondary-color);
-                            border-radius: 0 4px 4px 0;
-                        }
+                        
                     }
                 }
                 .undo-btn {
                     margin: 10px;
-                    button {
+                    .button {
                         border-radius: 50%;
                         border: 1px solid var(--secondary-color);
                         font-size: 24px;
@@ -89,18 +92,17 @@ h2 {
 //media queries for smaller screens. 
 @media screen and (max-width: 600px) {
     .pizzas-container{
-        ul{
-            li{
-                .active-panel {
+        .pizzas{
+            .pizza{
+                &__panel--active {
                     display: flex;
                     flex-direction: column;
                     align-items: center;
                     //overwrite pizza details display only when scrren smaller than 455px
                     @media screen and (max-width: 455px) {
-                        .pizza-details {
+                        .pizza-container {
                             display: block;
                         }
-                        
                     }
                 }
             }

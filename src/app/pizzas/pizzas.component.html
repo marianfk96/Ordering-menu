@@ -1,31 +1,31 @@
-<h2>Pizza</h2>
+<h2 class="item-type">Pizza</h2>
 <!-- 
     Added aria attributes where i thought it would improve accessibility.
     Made sure all the events work with keyboard as well by using semantic HTML.
 -->
 <section class="pizzas-container">
     <ul class="pizzas" >
-        <li *ngFor="let pizza of pizzas; let i = index">
-            <button class="visible-panel" (click)="setActiveIndex(i)"
+        <li *ngFor="let pizza of pizzas; let i = index" class="pizza">
+            <button class="pizza__panel" (click)="setActiveIndex(i)"
             [attr.aria-expanded]="activeIndex === i"
             [attr.aria-controls]="'panel-' + i" 
             id="pizza-{{i}}">
                 <!-- Unicode symbols for the "arrowheads"-->
                 {{ activeIndex === i ? '▲' : '▼' }} {{pizza.name}}
             </button>
-            <section class="active-panel" *ngIf="activeIndex === i" id="panel-{{i}}" 
+            <section class="pizza__panel--active" *ngIf="activeIndex === i" id="panel-{{i}}" 
              [attr.aria-labelledby]="'pizza-' + i">
-                <div class="pizza-details">
-                    <div class="pizza-price-and-size" *ngFor="let size of pizzaSizes">
-                        <label for="checkbox">
-                            <input type="checkbox" class="checkbox" 
+                <div class="pizza-container">
+                    <div class="pizza-details" *ngFor="let size of pizzaSizes">
+                        <label for="checkbox" class="checkbox-field">
+                            <input type="checkbox" class="checkbox-field__input" 
                             [checked]="currentlyChecked.get(`${pizza.itemId} ${size.sizeId}`)" 
                             (change)="onChanges(`${pizza.itemId} ${size.sizeId}`)">
-                            <p>{{size.name}}</p>
+                            <p class="checkbox-field__label">{{size.name}}</p>
                         </label>
-                        <div class="pizza-price">
-                            <span class="currency">$</span> 
-                            <input type="number" step="0.01" class="price-input"
+                        <div class="pizza-price-details">
+                            <span class="pizza-price-details__currency">$</span> 
+                            <input type="number" step="0.01" class="pizza-price-details__price-input"
                             [value]="pizzaPrices.get(`${pizza.itemId} ${size.sizeId}`)?.toFixed(2)"
                             [disabled]="!currentlyChecked.get(`${pizza.itemId} ${size.sizeId}`)" 
                             (blur)="onPriceChange(`${pizza.itemId} ${size.sizeId}`, $event)">
@@ -34,7 +34,7 @@
                 </div>
                 <div class="undo-btn" *ngIf="hasPriceChanges(pizza.itemId)">
                     <!-- Unicode symbol for revert -->
-                    <button (click)="onRevert()">⤺</button>
+                    <button (click)="onRevert()" class="button">⤺</button>
                 </div>
             </section>
         </li>
