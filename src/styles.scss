@@ -1,0 +1,11 @@
+//created color variables and applied some global styles 
+:root {
+  --primary-color: #c9e2f4;
+  --secondary-color: #4381cd;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+}
