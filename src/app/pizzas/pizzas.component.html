@@ -19,7 +19,7 @@
                     <div class="pizza-price-and-size" *ngFor="let size of pizzaSizes">
                         <label for="checkbox">
                             <input type="checkbox" class="checkbox" 
-                            [checked]="isChecked.get(`${pizza.itemId} ${size.sizeId}`)" 
+                            [checked]="currentlyChecked.get(`${pizza.itemId} ${size.sizeId}`)" 
                             (change)="onChanges(`${pizza.itemId} ${size.sizeId}`)">
                             <p>{{size.name}}</p>
                         </label>
@@ -27,7 +27,7 @@
                             <span class="currency">$</span> 
                             <input type="number" step="0.01" class="price-input"
                             [value]="pizzaPrices.get(`${pizza.itemId} ${size.sizeId}`)?.toFixed(2)"
-                            [disabled]="!isChecked.get(`${pizza.itemId} ${size.sizeId}`)" 
+                            [disabled]="!currentlyChecked.get(`${pizza.itemId} ${size.sizeId}`)" 
                             (blur)="onPriceChange(`${pizza.itemId} ${size.sizeId}`, $event)">
                         </div>
                     </div>

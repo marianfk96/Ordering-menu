@@ -14,11 +14,13 @@ import { CommonModule, NgForOf } from '@angular/common';
 export class PizzasComponent {
 
   public pizzas:Item[]
-  // need to keep track of the prices the pizzas had on page load, as well as any changes that occur -> 2 maps
+  /* need to keep track of the prices and the checked state 0f pizzas on page load, as well as any changes that occur -> 
+   2 maps for each, original and current values */
   private _originalPrices:Map<string, number> = new Map()
   public pizzaPrices:Map<string, number> = new Map()
   // 3rd map so checked state can persist on page reload
-  public isChecked:Map<string, boolean> = new Map()
+  public currentlyChecked:Map<string, boolean> = new Map()
+  private _originalCheckedState:Map<string, boolean> = new Map()
   public pizzaSizes:Size[]
   public activeIndex:number | null = null
 
@@ -42,7 +44,8 @@ export class PizzasComponent {
       const checkedSizesArray: [string, boolean][] = JSON.parse(checkedSizes)
       this.pizzaPrices = new Map(pricesArray)
       this._originalPrices = new Map(pricesArray)
-      this.isChecked = new Map(checkedSizesArray)
+      this.currentlyChecked = new Map(checkedSizesArray)
+      this._originalCheckedState = new Map(checkedSizesArray)
     } 
     // if nothing on local storage, create everything from scratch
     else {
@@ -51,7 +54,8 @@ export class PizzasComponent {
         const key:string =  `${entry.itemId} ${entry.sizeId}`
         this._originalPrices.set(key, entry.price)
         this.pizzaPrices.set(key, entry.price)
-        this.isChecked.set(key, true)
+        this.currentlyChecked.set(key, true)
+        this._originalCheckedState.set(key, true)
       }
     }
     
@@ -60,14 +64,18 @@ export class PizzasComponent {
   // change price with blur event so pizzaPrices is updated when the user is done modifying
   public onPriceChange(key:string, event:Event):void {
     const input = event.target as HTMLInputElement
-    const value:number = parseFloat(input.value)
+    let value:number = parseFloat(input.value)
+    if (isNaN(value) || value < 0) {
+      value = 0.00;
+      input.value = value.toFixed(2);
+    }
     this.pizzaPrices.set(key, value)
   }
 
   // toggle checkbox value and update the price
   public onChanges(key:string):void {
-    this.isChecked.set(key, !this.isChecked.get(key))
-    if (!this.isChecked.get(key)) {
+    this.currentlyChecked.set(key, !this.currentlyChecked.get(key))
+    if (!this.currentlyChecked.get(key)) {
       this.pizzaPrices.set(key, 0.00)
     }
   }
@@ -80,13 +88,13 @@ export class PizzasComponent {
   public onRevert():void {
     // if revert is visible, we definitely have an active index
     const pizzaId:number = this.pizzas[this.activeIndex!].itemId
+    console.log(this._originalCheckedState)
     for (let size of this.pizzaSizes) {
       const key:string = `${pizzaId} ${size.sizeId}`
-      /* ts cannot ascertain that originalPrices contains the key. if key is not found then null value is returned, which is NaN,
-      so before inserting it to pizzaPrices, we need to check */
-      const originalPrice:number | undefined = this._originalPrices.get(key)
-      if (originalPrice) {
-        this.pizzaPrices.set(key, originalPrice)
+      // if the key exists, there is also a valid value
+      if (this._originalPrices.has(key) && this._originalCheckedState.has(key) ) {
+        this.pizzaPrices.set(key, this._originalPrices.get(key)!)
+        this.currentlyChecked.set(key, this._originalCheckedState.get(key)!)
       } else {
         console.error('Key does not exist')
       }
@@ -94,9 +102,11 @@ export class PizzasComponent {
   }
 
   // set prices and checked state to local storage, making sure to convert them to JSON string
+  /* items will remain on local storage on page close. Since there is no explicit submit on the changes, we must infer that
+  any change the user makes is intended for submission. So I did not clear localStorage to simulate database behaviour */
   private _saveChanges():void {
     const pricesArray = Array.from(this.pizzaPrices.entries())
-    const checkedSizesArray = Array.from(this.isChecked.entries())
+    const checkedSizesArray = Array.from(this.currentlyChecked.entries())
     localStorage.setItem('pizzaPrices', JSON.stringify(pricesArray))
     localStorage.setItem('checkedSizes', JSON.stringify(checkedSizesArray))
   }
@@ -113,3 +123,4 @@ export class PizzasComponent {
   }
 
 }
+
